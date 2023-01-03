@@ -12,6 +12,9 @@ int currentcolor = green;
 const char* ssid = "NETGEAR88";
 const char* password = "XXXXXXXX";
 
+//Your Domain name with URL path or IP address with path
+String serverName = "https://";
+
 void setup() {
   Serial.begin(115200);
   WiFi.begin(ssid, password);
@@ -42,5 +45,24 @@ void loop() {
   else{
     Serial.println("Connection lost"); 
   }
+  // Send HTTP GET request
+  int httpResponseCode = http.GET();
+
+  if (httpResponseCode>0) {
+        Serial.print("HTTP Response code: ");
+        Serial.println(httpResponseCode);
+        String payload = http.getString();
+        Serial.println(payload);
+      }
+      else {
+        Serial.print("Error code: ");
+        Serial.println(httpResponseCode);
+      }
+      // Free resources
+      http.end();
+    }
+    else {
+      Serial.println("WiFi Disconnected");
+    }
   delay(1000); 
 }
