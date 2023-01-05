@@ -64,7 +64,6 @@ void loop() {
         while (client.connected()) {
             if (client.available()) {
                 char c = client.read();
-                Serial.write(c);
                 // read char by char HTTP request
                 linebuf[charcount] = c;
                 if (charcount < sizeof(linebuf) - 1) charcount++;
@@ -77,16 +76,17 @@ void loop() {
                     client.println();
                     client.println("{");
 
+                    // Create an empty string to put the int into
                     char distanseStr[100];
                     char distanceJson[] = "\"distance\": ";
 
-                    Serial.print("distanceCm: ");
-                    Serial.println(distanceCm);
-
+                    // Convert distanceCm into a string and put it in distanseStr
                     sprintf(distanseStr, "%ld", distanceCm);
                     
+                    // Combine the 2 strings
                     strcat(distanceJson,distanseStr);
 
+                    // Print the result
                     Serial.print("distanceJson: ");
                     Serial.println(distanceJson);
 
