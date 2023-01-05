@@ -2,7 +2,7 @@
 
 // Replace with your network credentials
 const char* ssid = "NETGEAR88";
-const char* password = "xxxxxxxxxxxxxx";
+const char* password = "xxxxxxxxxxxxx";
 WiFiServer server(80);
 
 long duration, distanceCm;
@@ -50,7 +50,8 @@ void loop() {
     // convert the time into a distance
     distanceCm = duration / 29.1 / 2 ;
 
-    //TODO: Print distance in terminal to see if it works there, we get 0 atm
+    // Wait for sensor to have time to work b4 looking for clients
+    delay(500);
 
     // listen for incoming clients
     WiFiClient client = server.available();
