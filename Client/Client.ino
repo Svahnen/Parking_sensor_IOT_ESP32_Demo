@@ -1,68 +1,74 @@
 #include <WiFi.h>
-#include <Adafruit_NeoPixel.h>
-
-#define NUMPIXELS 1
-Adafruit_NeoPixel pixels(NUMPIXELS, PIN_NEOPIXEL, NEO_GRB + NEO_KHZ800);
-
-int red = 0xFF0000;
-int yellow = 0xFFFF00;
-int green = 0x00FF00;
-int currentcolor = green; 
+#include <HTTPClient.h>
+#include <Arduino_JSON.h>
 
 const char* ssid = "NETGEAR88";
-const char* password = "XXXXXXXX";
+const char* password = "XXXXXXXXXX";
 
-//Your Domain name with URL path or IP address with path
-String serverName = "https://";
+unsigned long last_time = 0;
+unsigned long timer_delay = 10000;
+
+String json_array;
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
+
   WiFi.begin(ssid, password);
-  Serial.print("Connecting to WiFi"); 
-
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print(".");
+  Serial.println("Connecting to WIFI...");
+  while(WiFi.status() != WL_CONNECTED) {
     delay(500);
+    Serial.print(".");
   }
-  Serial.println("\nConnected to the WiFi network"); 
-  Serial.print("IP address: "); 
+  Serial.println("");
+  Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
-
-#if defined(NEOPIXEL_POWER)
- pinMode(NEOPIXEL_POWER, OUTPUT);
- digitalWrite(NEOPIXEL_POWER, HIGH);
-
-#endif
- pixels.begin(); // INITIALIZE NeoPixel strip object (REQUIRED)
- pixels.setBrightness(10); // not so bright
+ 
+  Serial.println("First set of readings will appear after 10 seconds");
 }
-void loop() {
-  if ((WiFi.status() == WL_CONNECTED)) {
-    Serial.println("You can try to ping me"); 
-    pixels.fill(currentcolor);
-    pixels.show();
-  }
-  else{
-    Serial.println("Connection lost"); 
-  }
-  // Send HTTP GET request
-  int httpResponseCode = http.GET();
 
-  if (httpResponseCode>0) {
-        Serial.print("HTTP Response code: ");
-        Serial.println(httpResponseCode);
-        String payload = http.getString();
-        Serial.println(payload);
+void loop() {
+  
+  if ((millis() - last_time) > timer_delay) {
+  
+    if(WiFi.status()== WL_CONNECTED){
+      String server = "http://192.168.1.8";
+      
+      json_array = GET_Request(server.c_str());
+      Serial.println(json_array);
+      JSONVar my_obj = JSON.parse(json_array);
+  
+      if (JSON.typeof(my_obj) == "undefined") {
+        Serial.println("Parsing input failed!");
+        return;
       }
-      else {
-        Serial.print("Error code: ");
-        Serial.println(httpResponseCode);
-      }
-      // Free resources
-      http.end();
+    
+      Serial.print("JSON object = ");
+      Serial.println(my_obj);
     }
     else {
       Serial.println("WiFi Disconnected");
     }
-  delay(1000); 
+    last_time = millis();
+  }
+}
+
+String GET_Request(const char* server) {
+  HTTPClient http;    
+  http.begin(server);
+  int httpResponseCode = http.GET();
+  
+  String payload = "{}"; 
+  
+  if (httpResponseCode>0) {
+    Serial.print("HTTP Response code: ");
+    Serial.println(httpResponseCode);
+    payload = http.getString();
+  }
+  else {
+    Serial.print("Error code: ");
+    Serial.println(httpResponseCode);
+  }
+  http.end();
+
+  return payload;
 }
