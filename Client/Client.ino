@@ -3,10 +3,15 @@
 #include <Arduino_JSON.h>
 
 const char* ssid = "NETGEAR88";
-const char* password = "XXXXXXXXXX";
+const char* password = "blackmoon866";
 
 unsigned long last_time = 0;
-unsigned long timer_delay = 10000;
+unsigned long timer_delay = 1000;
+
+int red = 0xFF0000;
+int yellow = 0xFFFF00;
+int green = 0x00FF00;
+int currentcolor = green; 
 
 String json_array;
 
@@ -34,16 +39,28 @@ void loop() {
       String server = "http://192.168.1.8";
       
       json_array = GET_Request(server.c_str());
-      Serial.println(json_array);
-      JSONVar my_obj = JSON.parse(json_array);
-  
-      if (JSON.typeof(my_obj) == "undefined") {
-        Serial.println("Parsing input failed!");
-        return;
+
+      // Look for json lenght
+      int lenght = 15;
+      while(json_array[lenght] != '\n')
+      {
+        lenght++;
       }
-    
-      Serial.print("JSON object = ");
-      Serial.println(my_obj);
+      int counter = 0;
+      for (int i = 15; i < lenght; ++i){
+        Serial.print(json_array[i]);
+        counter++;
+      }
+      Serial.println();
+
+      // Look for how many times the foor loop looped and add extra numbers depending on how many unused characters comes after
+      if (counter == 2){
+        Serial.println("red");
+      } else if (counter == 3){
+        Serial.println("yellow");
+      } else if (counter == 4){
+        Serial.println("green");
+      }
     }
     else {
       Serial.println("WiFi Disconnected");
@@ -60,8 +77,8 @@ String GET_Request(const char* server) {
   String payload = "{}"; 
   
   if (httpResponseCode>0) {
-    Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);
+    //Serial.print("HTTP Response code: ");
+    //Serial.println(httpResponseCode);
     payload = http.getString();
   }
   else {
