@@ -1,10 +1,7 @@
 # Parking_sensor_IOT_ESP32_Demo
 This repo holds the code for both the ESP responsible for collecting data and the one that shows it
 
-<img src="IMG/IMG_9169.HEIC" width="800"/>
-<img src="IMG/IMG_9171.HEIC" width="800"/>
-<img src="IMG/IMG_9172.HEIC" width="800"/>
-<img src="IMG/IMG_9173.HEIC" width="800"/>
 
-https://github.com/Svahnen/Parking_sensor_IOT_ESP32_Demo/raw/main/Video/trim.8DBD4D27-DE2D-4D05-B717-27F425D313C5.mov
+
+https://user-images.githubusercontent.com/32038561/211026019-7e3211f0-09d0-4d64-8109-37414cc355ba.mov
 
